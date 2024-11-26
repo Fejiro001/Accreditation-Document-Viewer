@@ -1,17 +1,16 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
-import AuthenticatedLayout from "./layout/AuthenticatedLayout";
-// import { AuthProvider } from "./components/AuthContext";
+import DriveFiles from "./pages/DriveFiles";
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-
-        <Route path="/" element={<AuthenticatedLayout />} />
+        <Route path="/" element={<DriveFiles />} />
+        <Route path="/folder/:folderId" element={<DriveFiles />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
