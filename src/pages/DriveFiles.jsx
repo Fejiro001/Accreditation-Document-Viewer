@@ -1,47 +1,129 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import AuthenticatedLayout from "../layout/AuthenticatedLayout";
+import { useNavigate, useParams } from "react-router-dom";
+import FileViewer from "../components/FileViewer";
+import File from "../components/File";
+import Folder from "../components/Folder";
+import SearchBar from "../components/SearchBar";
 
 function DriveFiles() {
-  const [folders, setFolders] = useState([]); // To store fetched folders
-  const [loading, setLoading] = useState(true); // To show loading state
-  const [error, setError] = useState(null); // To store error message if any
+  const [folders, setFolders] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [content, setContent] = useState(null);
+  const [fileName, setFileName] = useState(null);
+  const navigate = useNavigate();
+  const { folderId } = useParams();
+  const [viewerOpen, setViewerOpen] = useState(false);
+  // const [breadcrumbs, setBreadcrumbs] = useState([]);
+
+  const ROOT_FOLDER_ID = "1oOdXdyN1-_1HRGndMvphkz1M-NeIITyd";
 
   useEffect(() => {
-    const fetchFolders = async () => {
-      try {
-        const response = await axios.get("/api/getFolders");
-        setFolders(response.data);
-      } catch (error) {
-        setError(error.response ? error.response.data.message : error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (folderId) {
+      fetchFolders(folderId);
+    } else {
+      fetchFolders(ROOT_FOLDER_ID);
+    }
+  }, [folderId]);
 
-    fetchFolders();
-  }, []);
+  // Fetch folder data based on current folder ID
+  const fetchFolders = async (folderId) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`/api/folders/${folderId}`);
+      setFolders(response.data);
+    } catch (error) {
+      console.error("Error fetching folders: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // Fetch search results
+  const filterFolders = (query) => {
+    if (!query) return folders;
+    return folders.filter((item) =>
+      item.name.toLowerCase().includes(query.toLowerCase())
+    );
+  };
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Handle clicking folder
+  const handleFolderClick = (folderId) => {
+    fetchFolders(folderId);
+    navigate(`/folder/${folderId}`);
+  };
+
+  const handleFileClick = (fileName, fileContent) => {
+    setFileName(fileName);
+    setContent(fileContent);
+    setViewerOpen(true);
+  };
+
+  const handleClose = () => {
+    setViewerOpen(false);
+  };
+
+  const filteredFolders = filterFolders(searchQuery);
+
+  const truncateString = (str, maxLength) => {
+    if (str.length > maxLength) {
+      return str.slice(0, maxLength) + "...";
+    }
+    return str;
+  };
 
   return (
-    <>
-      <h2>Google Drive Folders</h2>
-      <ul>
-        {folders.map((folder) => (
-          <li key={folder.id}>
-            <strong>{folder.name}</strong>
-            <p>ID: {folder.id}</p>
-            <p>Mime Type: {folder.mimeType}</p>
+    <AuthenticatedLayout>
+      {/* File View */}
+      {viewerOpen && (
+        <FileViewer
+          fileName={fileName}
+          content={content}
+          onClose={handleClose}
+        />
+      )}
+
+      {/* Search Bar */}
+      <div className="m-4 w-96">
+        <SearchBar
+          searchQuery={searchQuery}
+          handleSearchChange={handleSearchChange}
+        />
+      </div>
+
+      {/* Folder and File List */}
+      <ul className="flex flex-wrap gap-12 py-10 px-20 w-full justify-start">
+        {filteredFolders.map((item) => (
+          <li
+            className="cursor-pointer *:flex *:flex-col *:gap-4 *:text-center w-28"
+            key={item.id}
+          >
+            {item.isFolder ? (
+              <Folder
+                item={item}
+                handleFolderClick={handleFolderClick}
+                truncateString={truncateString}
+              />
+            ) : (
+              <File
+                item={item}
+                handleFileClick={handleFileClick}
+                truncateString={truncateString}
+              />
+            )}
           </li>
         ))}
       </ul>
-    </>
+
+      {/* Loading */}
+      {loading && <div>Loading...</div>}
+    </AuthenticatedLayout>
   );
 }
 
