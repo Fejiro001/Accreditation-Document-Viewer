@@ -1,9 +1,6 @@
-/* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
-import ApplicationLogo from "./ApplicationLogo";
-import DarkModeToggle from "./DarkModeToggle";
 import api from "../api";
-// import { useAuth } from "./AuthContext";
+import logo from "../assets/lbs-logo-white.png";
 export default function NavBar() {
   const logout = async () => {
     try {
@@ -22,12 +19,15 @@ export default function NavBar() {
       <div className="flex h-fit justify-between md:h-20">
         <Link to="/">
           <div className="flex items-center py-2 px-8">
-            <ApplicationLogo className="block h-14 w-auto fill-current text-black dark:text-white" />
+            <img
+              src={logo}
+              alt="Lagos Business School logo"
+              className="block h-14 w-auto fill-current text-black dark:text-white"
+            />
           </div>
         </Link>
 
         <div className="flex items-center justify-evenly gap-6 pe-6">
-          <DarkModeToggle />
           <div className="relative">
             <div className="flex items-center gap-2 p-2 hover:cursor-pointer">
               <span className=" text-white">
