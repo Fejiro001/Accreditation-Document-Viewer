@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import AuthenticatedLayout from "../layout/AuthenticatedLayout";
 import { useNavigate, useParams } from "react-router-dom";
@@ -6,6 +5,7 @@ import FileViewer from "../components/FileViewer";
 import File from "../components/File";
 import Folder from "../components/Folder";
 import SearchBar from "../components/SearchBar";
+import api from "../api";
 
 function DriveFiles() {
   const [folders, setFolders] = useState([]);
@@ -13,10 +13,9 @@ function DriveFiles() {
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState(null);
   const [fileName, setFileName] = useState(null);
+  const [viewerOpen, setViewerOpen] = useState(false);
   const navigate = useNavigate();
   const { folderId } = useParams();
-  const [viewerOpen, setViewerOpen] = useState(false);
-  // const [breadcrumbs, setBreadcrumbs] = useState([]);
 
   const ROOT_FOLDER_ID = "1oOdXdyN1-_1HRGndMvphkz1M-NeIITyd";
 
@@ -28,11 +27,10 @@ function DriveFiles() {
     }
   }, [folderId]);
 
-  // Fetch folder data based on current folder ID
   const fetchFolders = async (folderId) => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/folders/${folderId}`);
+      const response = await api.get(`/folders/${folderId}`);
       setFolders(response.data);
     } catch (error) {
       console.error("Error fetching folders: ", error);
@@ -41,35 +39,38 @@ function DriveFiles() {
     }
   };
 
-  // Fetch search results
   const filterFolders = (query) => {
     if (!query) return folders;
     return folders.filter((item) =>
       item.name.toLowerCase().includes(query.toLowerCase())
     );
   };
+  const filteredFolders = filterFolders(searchQuery);
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
 
-  // Handle clicking folder
   const handleFolderClick = (folderId) => {
     fetchFolders(folderId);
     navigate(`/folder/${folderId}`);
   };
 
-  const handleFileClick = (fileName, fileContent) => {
+  const handleFileClick = (fileName, fileContent, viewUrl) => {
     setFileName(fileName);
     setContent(fileContent);
-    setViewerOpen(true);
+
+    if (viewUrl) {
+      window.open(viewUrl, "_blank");
+      setViewerOpen(false);
+    } else {
+      setViewerOpen(true);
+    }
   };
 
   const handleClose = () => {
     setViewerOpen(false);
   };
-
-  const filteredFolders = filterFolders(searchQuery);
 
   const truncateString = (str, maxLength) => {
     if (str.length > maxLength) {
@@ -80,7 +81,6 @@ function DriveFiles() {
 
   return (
     <AuthenticatedLayout>
-      {/* File View */}
       {viewerOpen && (
         <FileViewer
           fileName={fileName}
@@ -89,13 +89,10 @@ function DriveFiles() {
         />
       )}
 
-      {/* Search Bar */}
-      <div className="m-4 w-96">
-        <SearchBar
-          searchQuery={searchQuery}
-          handleSearchChange={handleSearchChange}
-        />
-      </div>
+      <SearchBar
+        searchQuery={searchQuery}
+        handleSearchChange={handleSearchChange}
+      />
 
       {/* Folder and File List */}
       <ul className="flex flex-wrap gap-12 py-10 px-20 w-full justify-start">
