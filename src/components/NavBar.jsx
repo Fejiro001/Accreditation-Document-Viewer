@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import api from "../api";
 import logo from "../assets/lbs-logo-white.png";
-export default function NavBar() {
+import PropTypes from "prop-types";
+export default function NavBar({ userName }) {
   const logout = async () => {
     try {
-      await api.post("/api/logout");
+      await api.post("/logout");
 
       document.cookie = "authToken=; Max-Age=-99999999;";
 
@@ -31,7 +32,7 @@ export default function NavBar() {
           <div className="relative">
             <div className="flex items-center gap-2 p-2 hover:cursor-pointer">
               <span className=" text-white">
-                {/* {user ? user : "Guest"} */}
+                Welcome, {userName ? userName : "Guest"}
               </span>
               <svg
                 className="w-auto h-3 fill-white"
@@ -51,3 +52,7 @@ export default function NavBar() {
     </nav>
   );
 }
+
+NavBar.propTypes = {
+  userName: PropTypes.string,
+};
