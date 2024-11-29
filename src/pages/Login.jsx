@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 function Login() {
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const message = location.state?.message;
 
   /**
    * Handles the Google login process by fetching the authentication URL
@@ -11,7 +14,7 @@ function Login() {
     setLoading(true);
 
     try {
-      window.location.href = "http://127.0.0.1:8000/api/google/redirect";
+      window.location.href = "http://127.0.0.1:8000/api/login";
     } catch (error) {
       console.error("Failed to fetch Google auth URL: ", error);
       alert("Unable to initiate Google login. Please try again later.");
@@ -32,7 +35,7 @@ function Login() {
           LBS Accreditation Document Viewer
         </h1>
         <div className="bg-[#ffa426] text-white p-4 rounded-md">
-          <p>You must be logged in to view this page.</p>
+          {message ? <p>{message}</p> : <p>Login to view main site.</p>}
         </div>
 
         <hr />
@@ -53,26 +56,6 @@ function Login() {
             </svg>
             <span>Google</span>
           </button>
-
-          {/* <div className="flex flex-col items-start">
-            <label>Email</label>
-            <input
-              className="border w-full rounded-md p-2 border-slate-300"
-              type="email"
-            />
-          </div>
-
-          <div className="flex flex-col items-start">
-            <label>Password</label>
-            <input
-              className="border w-full rounded-md p-2 border-slate-300"
-              type="password"
-            />
-          </div>
-
-          <button className="gap-4 bg-[#2d4373] text-white fill-white p-2 rounded-md">
-            <span>Login</span>
-          </button> */}
         </div>
       </div>
     </div>
