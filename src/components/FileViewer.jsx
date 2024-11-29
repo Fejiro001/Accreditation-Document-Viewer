@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
-
-/* eslint-disable react/prop-types */
+import PropTypes from "prop-types";
 const FileViewer = ({ content, fileName, onClose }) => {
   const containerRef = useRef(null);
 
@@ -22,7 +21,7 @@ const FileViewer = ({ content, fileName, onClose }) => {
       ref={containerRef}
       className="absolute w-full h-full min-h-screen bg-slate-500/40 flex items-center justify-center"
     >
-      <div className="absolute max-w-full my-8 mx-20 bg-white rounded-lg shadow-lg p-12">
+      <div className="max-w-full my-8 mx-20 bg-white rounded-lg shadow-lg p-12">
         <div className="flex justify-between items-center gap-4">
           {fileName && (
             <div>
@@ -45,6 +44,13 @@ const FileViewer = ({ content, fileName, onClose }) => {
       </div>
     </div>
   );
+};
+
+FileViewer.propTypes = {
+  content: PropTypes.string,
+  fileName: PropTypes.string,
+  viewUrl: PropTypes.string,
+  onClose: PropTypes.func,
 };
 
 export default FileViewer;

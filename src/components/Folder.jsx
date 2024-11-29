@@ -16,8 +16,8 @@ const Folder = ({ item, handleFolderClick, truncateString }) => {
 
 Folder.propTypes = {
   item: PropTypes.any,
-  handleFolderClick: PropTypes.func.isRequired,
-  truncateString: PropTypes.func.isRequired,
+  handleFolderClick: PropTypes.func,
+  truncateString: PropTypes.func,
 };
 
 export default Folder;

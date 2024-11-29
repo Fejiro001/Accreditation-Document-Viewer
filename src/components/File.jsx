@@ -3,7 +3,7 @@ const File = ({ item, handleFileClick, truncateString }) => {
   return (
     <div
       title={item.name}
-      onClick={() => handleFileClick(item.name, item.content)}
+      onClick={() => handleFileClick(item.name, item.content, item.viewUrl)}
     >
       <svg
         className="w-auto h-20 fill-[#12355B]"
@@ -19,8 +19,8 @@ const File = ({ item, handleFileClick, truncateString }) => {
 
 File.propTypes = {
     item: Proptypes.any,
-    handleFileClick: Proptypes.func.isRequired,
-    truncateString: Proptypes.func.isRequired,
+    handleFileClick: Proptypes.func,
+    truncateString: Proptypes.func,
 }
 
 export default File;
