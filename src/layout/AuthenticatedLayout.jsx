@@ -26,7 +26,7 @@ function AuthenticatedLayout({ children }) {
     };
 
     checkAuth();
-  });
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen items-center bg-slate-100 dark:bg-black">
