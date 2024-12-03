@@ -14,7 +14,7 @@ function Login() {
     setLoading(true);
 
     try {
-      window.location.href = "http://127.0.0.1:8000/api/login";
+      window.location.href = `${import.meta.env.VITE_API_URL}/api/login`;
     } catch (error) {
       console.error("Failed to fetch Google auth URL: ", error);
       alert("Unable to initiate Google login. Please try again later.");

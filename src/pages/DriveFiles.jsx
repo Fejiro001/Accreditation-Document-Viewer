@@ -17,7 +17,7 @@ function DriveFiles() {
   const navigate = useNavigate();
   const { folderId } = useParams();
 
-  const ROOT_FOLDER_ID = "1oOdXdyN1-_1HRGndMvphkz1M-NeIITyd";
+  const ROOT_FOLDER_ID = import.meta.env.VITE_ROOT_FOLDER_ID;
 
   useEffect(() => {
     if (folderId) {
