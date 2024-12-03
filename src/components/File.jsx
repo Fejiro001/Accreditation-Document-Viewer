@@ -6,7 +6,7 @@ const File = ({ item, handleFileClick, truncateString }) => {
       onClick={() => handleFileClick(item.name, item.content, item.viewUrl)}
     >
       <svg
-        className="w-auto h-20 fill-[#12355B]"
+        className="w-auto h-20 fill-primary-color"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 384 512"
       >
