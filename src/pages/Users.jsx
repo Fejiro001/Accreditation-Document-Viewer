@@ -1,5 +1,6 @@
+import AuthenticatedLayout from "../layout/AuthenticatedLayout";
 const Users = () => {
-  return <div>Users</div>;
+  return <AuthenticatedLayout>Users</AuthenticatedLayout>;
 };
 
 export default Users;
