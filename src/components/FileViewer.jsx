@@ -19,7 +19,7 @@ const FileViewer = ({ content, fileName, onClose }) => {
   return (
     <div
       ref={containerRef}
-      className="absolute w-full h-full min-h-screen bg-slate-500/40 flex items-center justify-center"
+      className="absolute top-0 w-full h-full min-h-screen bg-slate-500/40 flex items-center justify-center"
     >
       <div className="max-w-full my-8 mx-20 bg-white rounded-lg shadow-lg p-12">
         <div className="flex justify-between items-center gap-4">
