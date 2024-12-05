@@ -9,6 +9,7 @@ export default {
       },
       colors: {
         "primary-color": "#12355B",
+        'google-color': '#dd4b39',
       },
     },
   },
