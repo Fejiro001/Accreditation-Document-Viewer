@@ -1,17 +1,16 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "../api";
 import logo from "../assets/lbs-logo-white.png";
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
-export default function NavBar({ userName }) {
+export default function NavBar({ userName, userRole }) {
   const [dropdownVisibility, setDropdownVisibility] = useState(false);
   const dropdownRef = useRef(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownVisibility(false);
+        setDropdownVisibility(true);
       }
     };
 
@@ -72,17 +71,20 @@ export default function NavBar({ userName }) {
               aria-expanded={dropdownVisibility}
               role="menu"
               ref={dropdownRef}
-              className="grid absolute top-16 bg-primary-color p-2 rounded-md w-full space-y-2"
+              className="grid absolute top-16 bg-primary-color p-2 rounded-md w-full space-y-2 text-center"
             >
-              <button
-                onClick={() => {
-                  navigate("/admin/users");
-                }}
-                role="menuitem"
-              >
-                Manage Users
-              </button>
-              <hr className=" opacity-30" />
+              {userRole === "admin" && (
+                <>
+                  <a href="/admin/users/add" role="menuitem">
+                    Add Users
+                  </a>
+                  <hr className=" opacity-30" />
+                  <a href="/admin/users" role="menuitem">
+                    Manage Users
+                  </a>
+                  <hr className=" opacity-30" />
+                </>
+              )}
               <button role="menuitem" onClick={logout}>
                 Logout
               </button>
@@ -96,4 +98,5 @@ export default function NavBar({ userName }) {
 
 NavBar.propTypes = {
   userName: PropTypes.string,
+  userRole: PropTypes.string,
 };
