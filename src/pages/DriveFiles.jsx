@@ -1,125 +1,105 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AuthenticatedLayout from "../layout/AuthenticatedLayout";
 import { useNavigate, useParams } from "react-router-dom";
-import FileViewer from "../components/FileViewer";
-import File from "../components/File";
-import Folder from "../components/Folder";
-import SearchBar from "../components/SearchBar";
+import { FileViewer, File, Folder, SearchBar, Loading } from "../components";
+import { useAuth } from "../hooks/useAuth";
+import { filterItems, truncateString } from "../utils/folderUtils";
 import api from "../api";
 
 function DriveFiles() {
   const [folders, setFolders] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
-  const [content, setContent] = useState(null);
-  const [fileName, setFileName] = useState(null);
-  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerState, setViewerState] = useState({
+    content: null,
+    fileName: null,
+    isOpen: false,
+  });
+
   const navigate = useNavigate();
   const { folderId } = useParams();
-
+  const { user } = useAuth();
   const ROOT_FOLDER_ID = import.meta.env.VITE_ROOT_FOLDER_ID;
 
-  useEffect(() => {
-    if (folderId) {
-      fetchFolders(folderId);
-    } else {
-      fetchFolders(ROOT_FOLDER_ID);
-    }
-  }, [folderId]);
-
-  const fetchFolders = async (folderId) => {
+  const fetchFolders = useCallback(async (id) => {
     setLoading(true);
     try {
-      const response = await api.get(`/folders/${folderId}`);
+      const response = await api.get(`/folders/${id}`);
       setFolders(response.data);
     } catch (error) {
       console.error("Error fetching folders: ", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const filterFolders = (query) => {
-    if (!query) return folders;
-    return folders.filter((item) =>
-      item.name.toLowerCase().includes(query.toLowerCase())
-    );
-  };
-  const filteredFolders = filterFolders(searchQuery);
-
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-  const handleFolderClick = (folderId) => {
-    fetchFolders(folderId);
-    navigate(`/folder/${folderId}`);
-  };
+  useEffect(() => {
+    fetchFolders(folderId || ROOT_FOLDER_ID);
+  }, [folderId, fetchFolders]);
 
   const handleFileClick = (fileName, fileContent, viewUrl) => {
-    setFileName(fileName);
-    setContent(fileContent);
-
     if (viewUrl) {
       window.open(viewUrl, "_blank");
-      setViewerOpen(false);
+      return;
     } else {
-      setViewerOpen(true);
+      setViewerState({ content: fileContent, fileName, isOpen: true });
     }
   };
-
-  const handleClose = () => {
-    setViewerOpen(false);
-  };
-
-  const truncateString = (str, maxLength) => {
-    if (str.length > maxLength) {
-      return str.slice(0, maxLength) + "...";
-    }
-    return str;
-  };
+  const filteredFolders = filterItems(folders, searchQuery);
 
   return (
-    <AuthenticatedLayout>
-      {viewerOpen && (
+    <AuthenticatedLayout className={"items-center"}>
+      {viewerState.isOpen && (
         <FileViewer
-          fileName={fileName}
-          content={content}
-          onClose={handleClose}
+          {...viewerState}
+          onClose={() => setViewerState((prev) => ({ ...prev, isOpen: false }))}
         />
       )}
 
       <SearchBar
         searchQuery={searchQuery}
-        handleSearchChange={handleSearchChange}
+        handleSearchChange={(e) => setSearchQuery(e.target.value)}
       />
 
-      {/* Folder and File List */}
-      <ul className="flex flex-wrap gap-12 py-10 px-20 w-full justify-start">
-        {filteredFolders.map((item) => (
-          <li
-            className="cursor-pointer *:flex *:flex-col *:gap-4 *:text-center w-28"
-            key={item.id}
-          >
-            {item.isFolder ? (
-              <Folder
-                item={item}
-                handleFolderClick={handleFolderClick}
-                truncateString={truncateString}
-              />
-            ) : (
-              <File
-                item={item}
-                handleFileClick={handleFileClick}
-                truncateString={truncateString}
-              />
-            )}
-          </li>
-        ))}
-      </ul>
-
       {/* Loading */}
-      {loading && <div>Loading...</div>}
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          {/* Folder and File List */}
+          {filteredFolders.length === 0 ? (
+            <div className="w-full text-center py-10 text-gray-500">
+              No files or folders found
+            </div>
+          ) : (
+            <ul className="flex flex-wrap gap-12 py-10 w-full justify-evenly">
+              {filteredFolders.map((item) => (
+                <li
+                  className="cursor-pointer *:flex *:flex-col *:gap-4 *:text-center w-28"
+                  key={item.id}
+                >
+                  {item.isFolder ? (
+                    <Folder
+                      permissions={user?.permissions}
+                      item={item}
+                      onFolderClick={() => navigate(`/folder/${item.id}`)}
+                      truncateString={truncateString}
+                      currentFolderId={folderId || ROOT_FOLDER_ID}
+                      rootFolderId={ROOT_FOLDER_ID}
+                    />
+                  ) : (
+                    <File
+                      item={item}
+                      handleFileClick={handleFileClick}
+                      truncateString={truncateString}
+                    />
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
     </AuthenticatedLayout>
   );
 }
