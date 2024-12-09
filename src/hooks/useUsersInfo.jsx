@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import api from "../api";
 
 /**
@@ -17,20 +17,21 @@ export const useUsersInfo = () => {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
       const response = await api.get("/users");
       setUsers(response.data);
-      setLoading(false);
     } catch (error) {
-      console.log("Error fetching users: ", error.message);
+      console.error("Error fetching users: ", error.message);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   return { users, loading, fetchUsers };
 };
