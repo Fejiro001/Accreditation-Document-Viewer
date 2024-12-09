@@ -2,10 +2,10 @@ import PropTypes from "prop-types";
 
 const SearchBar = ({ searchQuery, handleSearchChange }) => {
   return (
-    <div className="m-4 w-96">
+    <div className="flex w-full max-w-[40rem]">
       <input
         aria-label="Search files and folders"
-        className=" py-2 w-full px-4 rounded-md"
+        className=" py-2 w-full px-4 rounded-md focus:outline focus:outline-primary-color shadow-md"
         type="text"
         placeholder="Search for files and folders"
         value={searchQuery}
