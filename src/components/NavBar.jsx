@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 import api from "../api";
 import logo from "../assets/lbs-logo-white.png";
-import PropTypes from "prop-types";
 import { useEffect, useRef, useState } from "react";
-export default function NavBar({ userName, userRole }) {
+import { useAuth } from "../hooks/useAuth";
+
+export default function NavBar() {
   const [dropdownVisibility, setDropdownVisibility] = useState(false);
   const dropdownRef = useRef(null);
+  const { user } = useAuth();
+  let displayName = user.name || localStorage.getItem("userName");
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -56,7 +59,7 @@ export default function NavBar({ userName, userRole }) {
             onClick={toggleDropdown}
             className="flex items-center gap-2 p-2 hover:cursor-pointer relative"
           >
-            <span>Welcome, {userName ? userName : "Guest"}</span>
+            <span className="text-sm">Welcome, {displayName ? displayName : "Guest"}</span>
             <svg
               className="w-auto h-3 fill-white"
               xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +76,7 @@ export default function NavBar({ userName, userRole }) {
               ref={dropdownRef}
               className="grid absolute top-16 bg-primary-color p-2 rounded-md w-full space-y-2 text-center"
             >
-              {userRole === "admin" && (
+              {user.role === "admin" && (
                 <>
                   <a href="/admin/users/add" role="menuitem">
                     Add Users
@@ -95,8 +98,3 @@ export default function NavBar({ userName, userRole }) {
     </nav>
   );
 }
-
-NavBar.propTypes = {
-  userName: PropTypes.string,
-  userRole: PropTypes.string,
-};
