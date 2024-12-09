@@ -6,20 +6,13 @@ function Login() {
   const location = useLocation();
   const message = location.state?.message;
 
-  /**
-   * Handles the Google login process by fetching the authentication URL
-   * from the API and redirecting the user to it.
-   */
   const handleGoogleLogin = async () => {
     setLoading(true);
-
     try {
       window.location.href = `${import.meta.env.VITE_API_URL}/api/login`;
     } catch (error) {
       console.error("Failed to fetch Google auth URL: ", error);
       alert("Unable to initiate Google login. Please try again later.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -45,7 +38,9 @@ function Login() {
           <button
             disabled={loading}
             onClick={handleGoogleLogin}
-            className="flex items-center gap-4 bg-[#dd4b39] text-white fill-white p-2 rounded-md"
+            className={`flex items-center gap-4 ${
+              loading ? "bg-opacity-75" : ""
+            } bg-google-color text-white fill-white p-2 rounded-md`}
           >
             <svg
               className="w-auto h-6"
@@ -54,7 +49,7 @@ function Login() {
             >
               <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
             </svg>
-            <span>Google</span>
+            <span>{loading ? "Connecting..." : "Google"}</span>
           </button>
         </div>
       </div>
