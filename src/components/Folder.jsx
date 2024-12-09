@@ -1,22 +1,41 @@
 import PropTypes from "prop-types";
-const Folder = ({ item, handleFolderClick, truncateString }) => {
+import { FolderIcon, LockedFolderIcon } from "./Icons";
+
+const Folder = ({
+  permissions,
+  item,
+  onFolderClick,
+  truncateString,
+  currentFolderId,
+  rootFolderId,
+}) => {
+  const isRootLevel = currentFolderId === rootFolderId;
+
+  const hasFolderAccess = isRootLevel
+    ? permissions?.some(
+        (permission) =>
+          permission.folderId === item.id && permission.hasAccess === 1
+      )
+    : true;
+
   return (
-    <div title={item.name} onClick={() => handleFolderClick(item.id)}>
-      <svg
-        className="w-auto h-20 fill-primary-color"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 512 512"
-      >
-        <path d="M64 480H448c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H288c-10.1 0-19.6-4.7-25.6-12.8L243.2 57.6C231.1 41.5 212.1 32 192 32H64C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64z" />
-      </svg>
+    <div
+      title={item.name}
+      onClick={hasFolderAccess ? () => onFolderClick(item.id) : undefined}
+      className={`${hasFolderAccess ? "cursor-pointer" : "cursor-not-allowed"}`}
+    >
+      {hasFolderAccess ? <FolderIcon /> : <LockedFolderIcon />}
       <strong className="text-wrap">{truncateString(item.name, 15)}</strong>
     </div>
   );
 };
 
 Folder.propTypes = {
+  permissions: PropTypes.any,
   item: PropTypes.any,
-  handleFolderClick: PropTypes.func,
+  currentFolderId: PropTypes.any,
+  rootFolderId: PropTypes.any,
+  onFolderClick: PropTypes.func,
   truncateString: PropTypes.func,
 };
 
