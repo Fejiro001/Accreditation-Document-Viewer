@@ -7,7 +7,7 @@ const SearchBar = ({ searchQuery, handleSearchChange }) => {
         aria-label="Search files and folders"
         className=" py-2 w-full px-4 rounded-md focus:outline focus:outline-primary-color shadow-md"
         type="text"
-        placeholder="Search for files and folders"
+        placeholder="Search for files"
         value={searchQuery}
         onChange={handleSearchChange}
       />
