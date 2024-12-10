@@ -10,16 +10,20 @@ const FileViewer = ({ content, fileName, onClose }) => {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
+    document.body.style.overflow = "hidden";
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
+      document.body.style.overflow = 'unset';
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  });
+  }, []);
 
   return (
     <div
       ref={containerRef}
-      className="absolute top-0 w-full h-full min-h-screen bg-slate-500/40 flex items-center justify-center"
+      className="absolute top-0 w-full min-h-screen bg-slate-500/40 flex items-center justify-center overflow-hidden"
     >
       <div className="max-w-full my-8 mx-20 bg-white rounded-lg shadow-lg p-12">
         <div className="flex justify-between items-center gap-4">

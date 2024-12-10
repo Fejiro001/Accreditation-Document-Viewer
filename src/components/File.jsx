@@ -5,6 +5,8 @@ const File = ({ item, handleFileClick, truncateString }) => {
     <div
       title={item.name}
       onClick={() => handleFileClick(item.name, item.content, item.viewUrl)}
+      role="link"
+      aria-label={`Open file ${item.name}`}
     >
       <FileIcon />
       <strong className="text-wrap">{truncateString(item.name, 15)}</strong>

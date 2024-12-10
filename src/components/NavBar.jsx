@@ -42,9 +42,12 @@ export default function NavBar() {
 
   return (
     <nav className="w-full bg-primary-color text-white">
-      <div className="flex h-fit justify-between items-center md:h-20 px-6">
-        <Link to="/">
-          <div className="flex items-center py-2 ">
+      <div className="flex h-fit justify-between items-center md:h-20 px-6 py-2 gap-4">
+        <Link
+          className="focus-visible:outline-white focus-visible:outline rounded-md"
+          to="/"
+        >
+          <div className="flex items-center">
             <img
               src={logo}
               alt="Lagos Business School logo"
@@ -57,9 +60,9 @@ export default function NavBar() {
           <button
             aria-haspopup="true"
             onClick={toggleDropdown}
-            className="flex items-center gap-2 p-2 hover:cursor-pointer relative"
+            className="flex items-center gap-2 p-2 hover:cursor-pointer relative rounded-md focus-visible:outline-white focus-visible:outline"
           >
-            <span className="text-sm">Welcome, {displayName ? displayName : "Guest"}</span>
+            <span>Welcome, {displayName ? displayName : "Guest"}</span>
             <svg
               className="w-auto h-3 fill-white"
               xmlns="http://www.w3.org/2000/svg"
@@ -74,7 +77,7 @@ export default function NavBar() {
               aria-expanded={dropdownVisibility}
               role="menu"
               ref={dropdownRef}
-              className="grid absolute top-16 bg-primary-color p-2 rounded-md w-full space-y-2 text-center"
+              className="grid absolute top-16 bg-primary-color p-2 rounded-md w-full space-y-2 text-center focus-visible:*:outline-white focus-visible:*:outline *:rounded-md"
             >
               {user.role === "admin" && (
                 <>

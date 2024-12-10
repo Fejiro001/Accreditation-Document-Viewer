@@ -35,7 +35,7 @@ function DriveFiles() {
 
   useEffect(() => {
     fetchFolders(folderId || ROOT_FOLDER_ID);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folderId, fetchFolders]);
 
   const handleFileClick = (fileName, fileContent, viewUrl) => {
@@ -47,6 +47,21 @@ function DriveFiles() {
     }
   };
   const filteredFolders = filterItems(folders, searchQuery);
+
+  const handleKeyNavigation = (e, index) => {
+    const items = document.querySelectorAll('li[tabindex="0"]');
+    
+    switch (e.key) {
+      case 'ArrowRight':
+        e.preventDefault();
+        if (index < items.length - 1) items[index + 1].focus();
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        if (index > 0) items[index - 1].focus();
+        break;
+    }
+  };
 
   return (
     <AuthenticatedLayout className={"items-center"}>
@@ -74,10 +89,26 @@ function DriveFiles() {
             </div>
           ) : (
             <ul className="flex flex-wrap gap-12 py-10 w-full justify-evenly">
-              {filteredFolders.map((item) => (
+              {filteredFolders.map((item, index) => (
                 <li
-                  className="cursor-pointer *:flex *:flex-col *:gap-4 *:text-center w-28"
+                  className="cursor-pointer *:flex *:flex-col *:gap-4 *:text-center w-28 focus:bg-primary-color/10 hover:bg-primary-color/10 outline-none rounded-md py-2"
                   key={item.id}
+                  tabIndex={0}
+                  role={item.isFolder ? "button" : "link"}
+                  aria-label={`${item.isFolder ? "Folder" : "File"}: ${
+                    item.name
+                  }`}
+                  onKeyDown={(e) => {
+                    handleKeyNavigation(e, index);
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      if (item.isFolder) {
+                        navigate(`/folder/${item.id}`);
+                      } else {
+                        handleFileClick(item.name, item.content, item.viewUrl);
+                      }
+                    }
+                  }}
                 >
                   {item.isFolder ? (
                     <Folder
