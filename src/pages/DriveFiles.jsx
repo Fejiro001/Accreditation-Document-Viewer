@@ -35,6 +35,7 @@ function DriveFiles() {
 
   useEffect(() => {
     fetchFolders(folderId || ROOT_FOLDER_ID);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [folderId, fetchFolders]);
 
   const handleFileClick = (fileName, fileContent, viewUrl) => {
