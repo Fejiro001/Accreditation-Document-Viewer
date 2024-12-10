@@ -111,13 +111,21 @@ const EditUser = () => {
       alert(error.response?.data?.message || "An error occurred");
     } finally {
       setIsSubmitting(false);
+      navigate("/admin/users");
     }
   };
 
   const handleDelete = async () => {
     try {
-      await api.delete(`/users/${id}`);
-      alert("User deleted successfully!");
+      const confirmation = confirm(
+        "Are you sure you want to delete this user? This action cannot be undone."
+      );
+      if (confirmation) {
+        await api.delete(`/users/${id}`);
+        alert("User deleted successfully!");
+      } else {
+        return;
+      }
     } catch (error) {
       alert(error.response?.data?.message || "An error occurred");
     } finally {
