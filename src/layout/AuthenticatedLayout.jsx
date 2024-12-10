@@ -16,7 +16,7 @@ function AuthenticatedLayout({ children, className }) {
       <div
         className={`${
           className || ""
-        } flex flex-col justify-center w-full max-w-[60rem] px-10 py-16`}
+        } flex flex-col justify-center w-full max-w-[60rem] px-10 py-12`}
       >
         {isAuthenticated && children}
       </div>
